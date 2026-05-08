@@ -1,9 +1,11 @@
 package com.juaracoding.pcmspringboot31.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.juaracoding.pcmspringboot31.util.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.List;
 
@@ -11,6 +13,7 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "MstAkses",schema = "projectz")
+@DynamicUpdate
 public class Akses extends BaseEntity {
     @Column(name = "NamaAkses",length = 20, nullable = false, unique = true)
     private String nama;

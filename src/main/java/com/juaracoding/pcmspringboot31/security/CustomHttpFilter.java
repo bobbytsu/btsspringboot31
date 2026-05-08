@@ -23,7 +23,7 @@ public class CustomHttpFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         System.out.println("Content-Type : "+request.getContentType());
         String contentType = request.getContentType()==null?"":request.getContentType();
-        if(!contentType.equals("multipart/form-data")){
+        if(!contentType.contains("multipart/form-data")){
             request = new MyHttpServletRequestWrapper(httpRequest);
         }
         // Logika sebelum memproses request

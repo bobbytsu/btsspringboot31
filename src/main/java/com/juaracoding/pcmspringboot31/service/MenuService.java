@@ -10,9 +10,7 @@ import com.juaracoding.pcmspringboot31.handler.ResponseHandler;
 import com.juaracoding.pcmspringboot31.model.Menu;
 import com.juaracoding.pcmspringboot31.repo.MenuRepo;
 import com.juaracoding.pcmspringboot31.specification.MenuSpecification;
-import com.juaracoding.pcmspringboot31.util.ConstantMessage;
-import com.juaracoding.pcmspringboot31.util.GlobalFunction;
-import com.juaracoding.pcmspringboot31.util.TransformPagination;
+import com.juaracoding.pcmspringboot31.util.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.hibernate.annotations.DynamicUpdate;
@@ -27,11 +25,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Modul Code : 02
@@ -48,6 +48,13 @@ public class MenuService implements IServiceDML<Menu>, IServiceQuery<SearchMenuD
 
     @Autowired
     private TransformPagination tp;
+    @Autowired
+    private SpringTemplateEngine springTemplateEngine;
+
+    @Autowired
+    private PdfGenerator pdfGenerator;
+
+    private StringBuilder sBuild = new StringBuilder();
 
     @Override
     public ResponseEntity<Object> save(Menu menu, HttpServletRequest request) {
@@ -147,17 +154,74 @@ public class MenuService implements IServiceDML<Menu>, IServiceQuery<SearchMenuD
     }
 
     @Override
-    public ResponseEntity<Object> upload(MultipartFile file, HttpServletRequest request) {
-        return null;
+    public ResponseEntity<Object> upload(MultipartFile file, HttpServletRequest request) throws IOException {
+
+        if(!ExcelReader.hasWorkBookFormat(file)){
+            return new ResponseHandler().
+                    handleResponse(ConstantMessage.MUST_EXCEL, HttpStatus.UNSUPPORTED_MEDIA_TYPE,null,"USM02301",request);
+        }
+        String strArr[][] = new ExcelReader(file.getInputStream(),"Sheet1").getDataWithoutHeader();
+        List<Menu> list = new ArrayList<>();
+        for(int i=0;i<strArr.length;i++){
+            Menu menu = new Menu();
+            menu.setNama(strArr[i][0]);
+            menu.setPath(strArr[i][1]);
+            menu.setDeskripsi(strArr[i][2]);
+            menu.setCreatedBy("{\"id\":\"1\",\"nama\":\"System\"}");
+            list.add(menu);
+        }
+        menuRepo.saveAll(list);
+        return new ResponseHandler().
+                handleResponse(ConstantMessage.SUCCESS_UPLOAD, HttpStatus.OK,null,null,request);
     }
 
     @Override
     public void downloadExcel(SearchMenuDTO param, HttpServletRequest request, HttpServletResponse response) {
+        List<Menu> list = null;
+        if(param==null){
+            GlobalFunction.manualResponse(response,new ResponseHandler().
+                    handleResponse(ConstantMessage.NOT_FOUND, HttpStatus.NOT_FOUND,null,"USM02311",request));
+        }
+        list = menuRepo.findAll(getSpecification(param));
+        int intSize = list.size();
+        String strColumnArr [] = {"Nama Menu","Path Menu","Deskripsi"};
+        String strData [][] = new String[intSize][strColumnArr.length];
+        for(int i=0;i<intSize;i++){
+            strData[i][0] = list.get(i).getNama();
+            strData[i][1] = list.get(i).getPath();
+            strData[i][2] = list.get(i).getDeskripsi();
+        }
+        String headerKey = "Content-Disposition";
+        sBuild.setLength(0);
+        String headerValue = sBuild.append("attachment; filename=menu_").
+                append(new SimpleDateFormat("ddMMyyHHmmss").format(new Date())).
+                append(".xlsx").toString();
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader(headerKey, headerValue);
+        new ExcelWriter(strData,strColumnArr,"Menu",response);
     }
 
     @Override
     public void downloadPdf(SearchMenuDTO param, HttpServletRequest request, HttpServletResponse response) {
-
+        List<Menu> list = null;
+        if(param==null){
+            GlobalFunction.manualResponse(response,new ResponseHandler().
+                    handleResponse(ConstantMessage.NOT_FOUND, HttpStatus.NOT_FOUND,null,"USM02311",request));
+        }
+        list = menuRepo.findAll(getSpecification(param));
+        int intSize = list.size();
+        Map<String,Object> mapResponse = new HashMap<>();
+        String strHtml = null;
+        Context context = new Context();
+        mapResponse.put("title","REPORT MENU");
+        mapResponse.put("listContent",list);
+        mapResponse.put("totalData",intSize);
+        mapResponse.put("username","Paul");
+        mapResponse.put("timestamp", LocalDateTime.now());
+        context.setVariables(mapResponse);
+        strHtml = springTemplateEngine.process("menu",context);
+        System.out.println("Html Rendering \n"+strHtml);
+        pdfGenerator.htmlToPdf(strHtml,"menu",response);
     }
 
     @Override

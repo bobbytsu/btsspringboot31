@@ -1,5 +1,7 @@
 package com.juaracoding.pcmspringboot31.dto.validation;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.juaracoding.pcmspringboot31.dto.RelDTO;
 import com.juaracoding.pcmspringboot31.model.Menu;
 import com.juaracoding.pcmspringboot31.util.ConstantMessage;
 import jakarta.validation.constraints.NotBlank;
@@ -24,6 +26,6 @@ public class ValAksesDTO {
     @NotBlank(message = ConstantMessage.NOT_BLANK)
     @Pattern(regexp = "^[a-zA-Z0-9\\s]{20,255}$", message = "Alfanumeric dan spasi min 20 maks 255")
     private String deskripsi;
-    @NotNull(message = ConstantMessage.NOT_NULL)
+//    @NotNull(message = ConstantMessage.NOT_NULL)
     private List<Long> menuId;
 }

@@ -10,6 +10,7 @@ spring:
   datasource:
 #    url: jdbc:sqlserver://localhost;databaseName=BEB31;schema=projectz;trustServerCertificate=true
     url: e84b3efac0261a03fff0c5182c725421fca147c61a2530b148ed6cbcabf727df4c99eb129046ef3ec6d7d3eafdfb47413abcc8cd85318145d99908aafe7f4b0db594c3a51aa6675b6af17f83ba3b3d59bace672d05bd6d91a2ac30bf56bab411
+#    e84b3efac0261a03fff0c5182c725421fca147c61a2530b148ed6cbcabf727df4c99eb129046ef3ec6d7d3eafdfb47413abcc8cd85318145d99908aafe7f4b0db594c3a51aa6675b6af17f83ba3b3d59bace672d05bd6d91a2ac30bf56bab411
 #    url: jdbc:mariadb://localhost:3309/beb31?useSSL=false&serverTimezone=UTC
     username: 6d4bbf96fec4cbd55fc9be6954a06d17
     password: 034456e6b2b6e4a86a38ffc10fbe7445
@@ -22,7 +23,7 @@ spring:
 #      dialect: org.hibernate.dialect.MariaDBDialect
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         default_schema: projectz

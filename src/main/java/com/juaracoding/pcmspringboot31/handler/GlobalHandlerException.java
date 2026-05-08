@@ -59,6 +59,12 @@ public class GlobalHandlerException extends ResponseEntityExceptionHandler {
         return new ResponseHandler().handleResponse("Proses Gagal",
                 HttpStatus.INTERNAL_SERVER_ERROR,null,"X01002",request);
     }
+    @ExceptionHandler(value = IndexOutOfBoundsException.class)
+    protected ResponseEntity<Object> handleIndexOutOfBound(IndexOutOfBoundsException e, HttpServletRequest request) {
+        LoggingFile.logException(this.getClass().getName(),"handleIndexOutOfBound",e);
+        return new ResponseHandler().handleResponse("Proses Gagal",
+                HttpStatus.INTERNAL_SERVER_ERROR,null,"X01003",request);
+    }
     @ExceptionHandler(value = NullPointerException.class)
     protected ResponseEntity<Object> handleNullPointer(NullPointerException e, HttpServletRequest request) {
         LoggingFile.logException(this.getClass().getName(),"handleNullPointer",e);

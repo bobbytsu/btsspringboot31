@@ -6,6 +6,7 @@ import com.juaracoding.pcmspringboot31.dto.validation.ValAksesDTO;
 import com.juaracoding.pcmspringboot31.dto.validation.ValMenuDTO;
 import com.juaracoding.pcmspringboot31.service.MenuService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -13,6 +14,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("api/menu")
@@ -48,6 +52,7 @@ public class MenuController {
         return menuService.findAll(pageable,request);
     }
 
+
     @PostMapping("/v1/{sort}/{sort_by}/{page}")
     public ResponseEntity<Object> search(
             @PathVariable String sort,
@@ -65,6 +70,30 @@ public class MenuController {
                 pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());break;
         }
         return menuService.findByParam(pageable,searchMenuDTO,request);
+    }
+
+    @PostMapping("/v1/upload")
+    public ResponseEntity<Object> uploadExcel(
+            @RequestParam MultipartFile file,
+            HttpServletRequest request) throws IOException {
+
+        return menuService.upload(file,request);
+    }
+
+    @PostMapping("/v1/excel")
+    public void downloadExcel(
+            @RequestBody SearchMenuDTO searchMenuDTO,
+            HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        menuService.downloadExcel(searchMenuDTO,request,response);
+    }
+
+    @PostMapping("/v1/pdf")
+    public void downloadPdf(
+            @RequestBody SearchMenuDTO searchMenuDTO,
+            HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        menuService.downloadPdf(searchMenuDTO,request,response);
     }
 
     private String checkSortBy(String sortBy){
