@@ -10,6 +10,7 @@ spring:
   datasource:
 #    url: jdbc:sqlserver://localhost;databaseName=BEB31;schema=projectz;trustServerCertificate=true
 #    url: e84b3efac0261a03fff0c5182c725421fca147c61a2530b148ed6cbcabf727df4c99eb129046ef3ec6d7d3eafdfb47413abcc8cd85318145d99908aafe7f4b0db594c3a51aa6675b6af17f83ba3b3d59bace672d05bd6d91a2ac30bf56bab411
+# url-docker : e84b3efac0261a03fff0c5182c725421821c9ad8b5394f3f50cb52a5da2d5a6c803e90abf2a9a233a8a0ec9585263d093ec9c6d32473258e41931ed207245cf04accb672202b6f0530be373599d87ea5a2a693af73b4b70e94930365e551ee82ff484f28977b9ef1dc0a15ec18cf2ebd
     url: ${DB_URL}
 #    e84b3efac0261a03fff0c5182c725421fca147c61a2530b148ed6cbcabf727df4c99eb129046ef3ec6d7d3eafdfb47413abcc8cd85318145d99908aafe7f4b0db594c3a51aa6675b6af17f83ba3b3d59bace672d05bd6d91a2ac30bf56bab411
 #    url: jdbc:mariadb://localhost:3309/beb31?useSSL=false&serverTimezone=UTC
@@ -50,4 +51,4 @@ cumi:
 #cumi.api.base-url
 #cumi.es.defined-indexes
 server:
-  port: 8080
+  port: 8081

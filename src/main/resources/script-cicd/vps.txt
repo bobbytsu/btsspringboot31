@@ -55,12 +55,12 @@ echo [Langkah 4] Memeriksa file paul-api.jar...
 IF EXIST "paul-api.jar" (
     :: 4.1 Kalau ada, run script java -jar paul-api.jar
     echo [Langkah 4.1] File ditemukan! Menjalankan paul-api.jar...
-    java -jar -DDB_URL=e84b3efac0261a03fff0c5182c725421fca147c61a2530b148ed6cbcabf727df4c99eb129046ef3ec6d7d3eafdfb47413abcc8cd85318145d99908aafe7f4b0db594c3a51aa6675b6af17f83ba3b3d59bace672d05bd6d91a2ac30bf56bab411 -DDB_USERNAME=6d4bbf96fec4cbd55fc9be6954a06d17 -DDB_PASSWORD=034456e6b2b6e4a86a38ffc10fbe7445 paul-api.jar
+    java -DDB_URL=e84b3efac0261a03fff0c5182c725421fca147c61a2530b148ed6cbcabf727df4c99eb129046ef3ec6d7d3eafdfb47413abcc8cd85318145d99908aafe7f4b0db594c3a51aa6675b6af17f83ba3b3d59bace672d05bd6d91a2ac30bf56bab411 -DDB_USERNAME=6d4bbf96fec4cbd55fc9be6954a06d17 -DDB_PASSWORD=034456e6b2b6e4a86a38ffc10fbe7445 -jar paul-api.jar
 ) ELSE (
     :: 4.2 Kalau tidak ada, delay 10 s
     echo [Langkah 4.2] File paul-api.jar belum ada. Delay 3 detik...
     timeout /t 10 /nobreak
     :: 4.2a Run script java -jar paul-api.jar
     echo [Langkah 4.2a] Mencoba menjalankan paul-api.jar...
-    java -jar -DDB_URL=e84b3efac0261a03fff0c5182c725421fca147c61a2530b148ed6cbcabf727df4c99eb129046ef3ec6d7d3eafdfb47413abcc8cd85318145d99908aafe7f4b0db594c3a51aa6675b6af17f83ba3b3d59bace672d05bd6d91a2ac30bf56bab411 -DDB_USERNAME=6d4bbf96fec4cbd55fc9be6954a06d17 -DDB_PASSWORD=034456e6b2b6e4a86a38ffc10fbe7445 paul-api.jar
+    java -DDB_URL=e84b3efac0261a03fff0c5182c725421fca147c61a2530b148ed6cbcabf727df4c99eb129046ef3ec6d7d3eafdfb47413abcc8cd85318145d99908aafe7f4b0db594c3a51aa6675b6af17f83ba3b3d59bace672d05bd6d91a2ac30bf56bab411 -DDB_USERNAME=6d4bbf96fec4cbd55fc9be6954a06d17 -DDB_PASSWORD=034456e6b2b6e4a86a38ffc10fbe7445 -jar paul-api.jar
 )
