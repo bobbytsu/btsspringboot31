@@ -63,19 +63,19 @@ public class User extends BaseEntity implements UserDetails {
 //        grantedAuthorities.add(new SimpleGrantedAuthority(akses.getNama()));
         for (AksesMenu aksesMenu : aksesMap) {
             if(Boolean.TRUE.equals(aksesMenu.getCanInsert())){
-                grantedAuthorities.add(new SimpleGrantedAuthority(aksesMenu.getMenu().getId()+"i"));
+                grantedAuthorities.add(new SimpleGrantedAuthority(aksesMenu.getMenu().getKodeMenu()+"i"));
             }
             if(Boolean.TRUE.equals(aksesMenu.getCanUpdate())){
-                grantedAuthorities.add(new SimpleGrantedAuthority(aksesMenu.getMenu().getId()+"u"));
+                grantedAuthorities.add(new SimpleGrantedAuthority(aksesMenu.getMenu().getKodeMenu()+"u"));
             }
             if(Boolean.TRUE.equals(aksesMenu.getCanDelete())){
-                grantedAuthorities.add(new SimpleGrantedAuthority(aksesMenu.getMenu().getId()+"d"));
+                grantedAuthorities.add(new SimpleGrantedAuthority(aksesMenu.getMenu().getKodeMenu()+"d"));
             }
             if(Boolean.TRUE.equals(aksesMenu.getCanView())){
-                grantedAuthorities.add(new SimpleGrantedAuthority(aksesMenu.getMenu().getId()+"v"));
+                grantedAuthorities.add(new SimpleGrantedAuthority(aksesMenu.getMenu().getKodeMenu()+"v"));
             }
             if(Boolean.TRUE.equals(aksesMenu.getCanPrint())){
-                grantedAuthorities.add(new SimpleGrantedAuthority(aksesMenu.getMenu().getId()+"p"));
+                grantedAuthorities.add(new SimpleGrantedAuthority(aksesMenu.getMenu().getKodeMenu()+"p"));
             }
         }
         System.out.println("otorisasi : "+grantedAuthorities);

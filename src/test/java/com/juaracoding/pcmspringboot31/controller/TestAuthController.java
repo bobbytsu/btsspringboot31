@@ -28,7 +28,7 @@ public class TestAuthController extends AbstractTestNGSpringContextTests {
     private JSONObject requestBody;
     public static final String ADMIN_USERNAME = "admin.123";
     public static final String ADMIN_PASSWORD = "Admin@123";
-    public static final String TEST_HOST = "http://localhost:8080/api";
+    public static final String TEST_HOST = "http://localhost:8081/api";
 
     //1x request regis under 500ms / 0.5s throughput
     @BeforeSuite

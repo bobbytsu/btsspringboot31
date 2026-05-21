@@ -7,6 +7,7 @@ import com.juaracoding.pcmspringboot31.dto.query.SearchMenuDTO;
 import com.juaracoding.pcmspringboot31.dto.report.ReportMenuDTO;
 import com.juaracoding.pcmspringboot31.dto.validation.ValMenuDTO;
 import com.juaracoding.pcmspringboot31.handler.ResponseHandler;
+import com.juaracoding.pcmspringboot31.model.Akses;
 import com.juaracoding.pcmspringboot31.model.Menu;
 import com.juaracoding.pcmspringboot31.repo.MenuRepo;
 import com.juaracoding.pcmspringboot31.specification.MenuSpecification;
@@ -248,6 +249,24 @@ public class MenuService implements IServiceDML<Menu>, IServiceQuery<SearchMenuD
         }
         return spec;
     }
+
+    @Override
+    public ResponseEntity<Object> findById(Long id,HttpServletRequest request) {
+        if(id==null){
+            return new ResponseHandler().
+                    handleResponse(ConstantMessage.NOT_FOUND, HttpStatus.BAD_REQUEST,null,"USM0281",request);
+        }
+        Optional<Menu> menuOptional = menuRepo.findById(id);
+        if(menuOptional.isEmpty()){
+            return new ResponseHandler().
+                    handleResponse(ConstantMessage.NOT_FOUND, HttpStatus.NOT_FOUND,null,"USM02182",request);
+        }
+
+        Menu menuDB = menuOptional.get();
+
+        return new ResponseHandler().
+                handleResponse(ConstantMessage.OK, HttpStatus.OK,mapperToDTO(menuDB),null,request);
+    }
     public Menu mapToEntity(ValMenuDTO valMenuDTO){
         Menu menu = new Menu();
         menu.setNama(valMenuDTO.getNama());
@@ -258,6 +277,9 @@ public class MenuService implements IServiceDML<Menu>, IServiceQuery<SearchMenuD
     public Menu mapperToEntity(ValMenuDTO valMenuDTO){
         Menu menu = map.map(valMenuDTO, Menu.class);
         return menu;
+    }
+    public ReportMenuDTO mapperToDTO(Menu menu){
+        return map.map(menu, ReportMenuDTO.class);
     }
     public List<ReportMenuDTO> mapperToDTO(List<Menu> menus){
         List<ReportMenuDTO> menu = map.map(menus, new TypeToken<List<ReportMenuDTO>>() {}.getType());

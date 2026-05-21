@@ -5,6 +5,8 @@
         <classes>
             <class name="com.juaracoding.pcmspringboot31.coretan.TestAritmatika"></class>
             <class name="com.juaracoding.pcmspringboot31.coretan.TestStringFunction"></class>
+            <class name="com.juaracoding.pcmspringboot31.controller.TestAuthController"></class>
+            <class name="com.juaracoding.pcmspringboot31.controller.TestMenuController"></class>
         </classes>
     </test>
 </suite>

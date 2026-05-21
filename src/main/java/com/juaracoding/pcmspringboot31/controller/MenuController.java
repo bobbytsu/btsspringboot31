@@ -27,13 +27,13 @@ public class MenuController {
     private MenuService menuService;
 
     @PostMapping("/v1")
-    @PreAuthorize("hasAuthority('1i')")
+    @PreAuthorize("hasAuthority('001i')")
     public ResponseEntity<Object> save(@Valid @RequestBody ValMenuDTO valMenuDTO, HttpServletRequest request) {
         return menuService.save(menuService.mapperToEntity(valMenuDTO),request);
     }
 
     @PutMapping("/v1/{id}")
-    @PreAuthorize("hasAuthority('1u')")
+    @PreAuthorize("hasAuthority('001u')")
     public ResponseEntity<Object> update(
             @PathVariable Long id,
             @Valid @RequestBody ValMenuDTO valMenuDTO, HttpServletRequest request) {
@@ -41,15 +41,23 @@ public class MenuController {
     }
 
     @DeleteMapping("/v1/{id}")
-    @PreAuthorize("hasAuthority('1d')")
+    @PreAuthorize("hasAuthority('001d')")
     public ResponseEntity<Object> delete(
             @PathVariable Long id,
             HttpServletRequest request) {
         return menuService.deleteById(id,request);
     }
 
+    @GetMapping("/v1/{id}")
+    @PreAuthorize("hasAuthority('001v')")
+    public ResponseEntity<Object> findById(
+            @PathVariable Long id,
+            HttpServletRequest request) {
+        return menuService.findById(id,request);
+    }
+
     @GetMapping
-    @PreAuthorize("hasAuthority('1v')")
+    @PreAuthorize("hasAuthority('001v')")
     public ResponseEntity<Object> findAll(
             HttpServletRequest request) {
         Pageable pageable = PageRequest.of(0, OtherConfig.getDefaultPaginationSize(), Sort.by("id"));
@@ -58,7 +66,7 @@ public class MenuController {
 
 
     @PostMapping("/v1/{sort}/{sort_by}/{page}")
-    @PreAuthorize("hasAuthority('1v')")
+    @PreAuthorize("hasAuthority('001v')")
     public ResponseEntity<Object> search(
             @PathVariable String sort,
             @PathVariable(value = "sort_by") String sortBy,
@@ -78,7 +86,7 @@ public class MenuController {
     }
 
     @PostMapping("/v1/upload")
-    @PreAuthorize("hasAuthority('1i')")
+    @PreAuthorize("hasAuthority('001i')")
     public ResponseEntity<Object> uploadExcel(
             @RequestParam MultipartFile file,
             HttpServletRequest request) throws IOException {
@@ -87,7 +95,7 @@ public class MenuController {
     }
 
     @PostMapping("/v1/excel")
-    @PreAuthorize("hasAuthority('1p')")
+    @PreAuthorize("hasAuthority('001p')")
     public void downloadExcel(
             @RequestBody SearchMenuDTO searchMenuDTO,
             HttpServletRequest request,
@@ -96,7 +104,7 @@ public class MenuController {
     }
 
     @PostMapping("/v1/pdf")
-    @PreAuthorize("hasAuthority('1p')")
+    @PreAuthorize("hasAuthority('001p')")
     public void downloadPdf(
             @RequestBody SearchMenuDTO searchMenuDTO,
             HttpServletRequest request,
@@ -107,11 +115,10 @@ public class MenuController {
     private String checkSortBy(String sortBy){
         switch (sortBy){
             case "nama": sortBy="nama";break;
-//            case "path": sortBy="path";break;
-//            case "deskripsi": sortBy="deskripsi";break;
+            case "path": sortBy="path";break;
+            case "deskripsi": sortBy="deskripsi";break;
             default: sortBy="id";break;
         }
         return sortBy;
     }
-
 }

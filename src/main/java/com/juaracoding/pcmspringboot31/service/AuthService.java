@@ -154,6 +154,9 @@ public class AuthService implements UserDetailsService {
         Map<String,Object> mapResponse = new HashMap<>();
         mapResponse.put("menu",modelMapper.map(listMenu,new TypeToken<List<ReportMenuDTO>>() {}.getType()));
         mapResponse.put("token",token);
+        mapResponse.put("username",userDb.getUsername());
+        mapResponse.put("nama_lengkap",userDb.getNamaLengkap());
+        mapResponse.put("role",userDb.getAkses().getNama());
 
         return new ResponseHandler().
                 handleResponse(ConstantMessage.SUCCESS_LOGIN, HttpStatus.OK,mapResponse,null,request);

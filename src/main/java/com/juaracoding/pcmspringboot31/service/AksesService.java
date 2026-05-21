@@ -189,6 +189,25 @@ public class AksesService implements IServiceDML<Akses>, IServiceQuery<SearchAks
         }
         return spec;
     }
+
+    @Override
+    public ResponseEntity<Object> findById(Long id,HttpServletRequest request) {
+        if(id==null){
+            return new ResponseHandler().
+                    handleResponse(ConstantMessage.NOT_FOUND, HttpStatus.BAD_REQUEST,null,"USM0181",request);
+        }
+        Optional<Akses> aksesOptional = aksesRepo.findById(id);
+        if(aksesOptional.isEmpty()){
+            return new ResponseHandler().
+                    handleResponse(ConstantMessage.NOT_FOUND, HttpStatus.NOT_FOUND,null,"USM01182",request);
+        }
+
+        Akses aksesDB = aksesOptional.get();
+
+        return new ResponseHandler().
+                handleResponse(ConstantMessage.OK, HttpStatus.OK,mapperToDTO(aksesDB),null,request);
+    }
+
     public Akses mapToEntity(ValAksesDTO valAksesDTO){
         Akses akses = new Akses();
         akses.setNama(valAksesDTO.getNama());
@@ -215,6 +234,9 @@ public class AksesService implements IServiceDML<Akses>, IServiceQuery<SearchAks
     }
     public Akses mapperToEntity(ValAksesDTO valAksesDTO){
         return map.map(valAksesDTO, Akses.class);
+    }
+    public ReportAksesDTO mapperToDTO(Akses akses){
+        return map.map(akses, ReportAksesDTO.class);
     }
     public List<ReportAksesDTO> mapperToDTO(List<Akses> aksess){
         List<ReportAksesDTO> akses = map.map(aksess, new TypeToken<List<ReportAksesDTO>>() {}.getType());
