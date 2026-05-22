@@ -50,11 +50,12 @@ public class TokenGenerator {
                     header("Content-Type","application/json").
                     header("accept","*/*").
                     body(req).
-                    request(Method.POST, "api/auth/login");
+                    request(Method.POST, "/auth/login");
 
             /** extract informasi response nya */
             int intResponse = response.getStatusCode();
             JsonPath jPath = response.jsonPath();
+//            jPath.prettyPrint();
 //            System.out.println(jPath.get("object.nama").toString());
             this.token = "Bearer "+jPath.get("data.token");//gunakan Bearer sebelum token
             /** EXIT OTENTIKASI BERMASALAH

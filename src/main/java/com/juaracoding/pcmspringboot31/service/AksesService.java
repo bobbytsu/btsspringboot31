@@ -132,6 +132,8 @@ public class AksesService implements IServiceDML<Akses>, IServiceQuery<SearchAks
         }
         aksesDB.setDeletedBy("{\"id\":\"1\",\"nama\":\"System\"}");
         aksesDB.setDeletedAt(LocalDateTime.now());
+        aksesDB.getAksesMenuList().clear(); // Kosongkan list lama
+        aksesRepo.flush();
         return new ResponseHandler().
                 handleResponse(ConstantMessage.SUCCESS_DELETE, HttpStatus.OK,null,null,request);
     }

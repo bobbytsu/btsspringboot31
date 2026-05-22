@@ -43,6 +43,14 @@ public class AksesController {
         return aksesService.deleteById(id,request);
     }
 
+    @GetMapping("/v1/{id}")
+    @PreAuthorize("hasAuthority('002v')")
+    public ResponseEntity<Object> findById(
+            @PathVariable Long id,
+            HttpServletRequest request) {
+        return aksesService.findById(id,request);
+    }
+
     @GetMapping
     @PreAuthorize("hasAuthority('002v')")
     public ResponseEntity<Object> findAll(

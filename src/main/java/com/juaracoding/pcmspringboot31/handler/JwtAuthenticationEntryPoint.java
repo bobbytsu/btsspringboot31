@@ -26,11 +26,8 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
         /** Response Header */
+        System.out.println("Thread 401  : "+Thread.currentThread().getName());
         response.setHeader("Content-Type","application/json");
-//        int status = response.getStatus();
-//        status = status == 200 ? HttpServletResponse.SC_UNAUTHORIZED : HttpServletResponse.SC_FORBIDDEN;
-//        /** Response Code */
-//        String message = status==401?"Otentikasi Bermasalah":"Otorisasi Bermasalah";
         response.setStatus(401);
         /** Response Body */
         Map<String,Object> data = new HashMap<>();

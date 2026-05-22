@@ -168,12 +168,13 @@ public class MenuService implements IServiceDML<Menu>, IServiceQuery<SearchMenuD
             menu.setNama(strArr[i][0]);
             menu.setPath(strArr[i][1]);
             menu.setDeskripsi(strArr[i][2]);
+            menu.setKodeMenu(strArr[i][3]);
             menu.setCreatedBy("{\"id\":\"1\",\"nama\":\"System\"}");
             list.add(menu);
         }
         menuRepo.saveAll(list);
         return new ResponseHandler().
-                handleResponse(ConstantMessage.SUCCESS_UPLOAD, HttpStatus.OK,null,null,request);
+                handleResponse(ConstantMessage.SUCCESS_UPLOAD, HttpStatus.CREATED,null,null,request);
     }
 
     @Override
@@ -221,7 +222,7 @@ public class MenuService implements IServiceDML<Menu>, IServiceQuery<SearchMenuD
         mapResponse.put("timestamp", LocalDateTime.now());
         context.setVariables(mapResponse);
         strHtml = springTemplateEngine.process("menu",context);
-        System.out.println("Html Rendering \n"+strHtml);
+//        System.out.println("Html Rendering \n"+strHtml);
         pdfGenerator.htmlToPdf(strHtml,"menu",response);
     }
 

@@ -81,6 +81,7 @@ public class GlobalHandlerException extends ResponseEntityExceptionHandler {
     }
     @ExceptionHandler(value = AccessDeniedException.class)
     protected ResponseEntity<Object> handleAccessDenied(AccessDeniedException e, HttpServletRequest request) {
+        System.out.println("Thread 403  : "+Thread.currentThread().getName());
         LoggingFile.logException(this.getClass().getName(),"handleAccessDenied",e);
         return new ResponseHandler().handleResponse(e.getMessage(),
                 HttpStatus.FORBIDDEN,null,"X02002",request);

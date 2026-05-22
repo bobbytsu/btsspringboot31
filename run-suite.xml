@@ -7,6 +7,7 @@
             <class name="com.juaracoding.pcmspringboot31.coretan.TestStringFunction"></class>
             <class name="com.juaracoding.pcmspringboot31.controller.TestAuthController"></class>
             <class name="com.juaracoding.pcmspringboot31.controller.TestMenuController"></class>
+            <class name="com.juaracoding.pcmspringboot31.controller.TestAksesController"></class>
         </classes>
     </test>
 </suite>

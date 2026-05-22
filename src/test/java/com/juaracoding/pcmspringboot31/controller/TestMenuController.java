@@ -2,11 +2,14 @@ package com.juaracoding.pcmspringboot31.controller;
 
 
 import com.juaracoding.pcmspringboot31.config.OtherConfig;
+import com.juaracoding.pcmspringboot31.dto.validation.ValMenuDTO;
 import com.juaracoding.pcmspringboot31.model.Menu;
 import com.juaracoding.pcmspringboot31.repo.MenuRepo;
 import com.juaracoding.pcmspringboot31.util.ConstantMessage;
 import com.juaracoding.pcmspringboot31.util.GenerateData;
+import com.juaracoding.pcmspringboot31.util.GenerateExcelMenu;
 import com.juaracoding.pcmspringboot31.util.TokenGenerator;
+import io.restassured.http.Method;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.json.simple.JSONObject;
@@ -17,6 +20,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -58,7 +63,7 @@ public class TestMenuController extends AbstractTestNGSpringContextTests {
 
             Response response = given()
                     .header("Content-Type","application/json")
-                    .header("Authorization",TestAuthController.jwt)
+                    .header(TestAuthController.AUTH_HEADER,TestAuthController.jwt)
                     .body(requestBody)
                     .post("/menu/v1");
 
@@ -96,7 +101,8 @@ public class TestMenuController extends AbstractTestNGSpringContextTests {
 
             Response response = given()
                     .header("Content-Type","application/json")
-                    .header("Authorization",TestAuthController.jwt)
+                    .header("accept","application/json")
+                    .header(TestAuthController.AUTH_HEADER,TestAuthController.jwt)
                     .body(requestBody)
                     .put("/menu/v1/"+menu.getId());
 
@@ -120,7 +126,8 @@ public class TestMenuController extends AbstractTestNGSpringContextTests {
             initObject(menu);
             Response response = given()
                     .header("Content-Type","application/json")
-                    .header("Authorization",TestAuthController.jwt)
+                    .header("accept","application/json")
+                    .header(TestAuthController.AUTH_HEADER,TestAuthController.jwt)
                     .body(requestBody)
                     .get("/menu/v1/"+menu.getId());
 
@@ -146,7 +153,8 @@ public class TestMenuController extends AbstractTestNGSpringContextTests {
             initObject(menu);
             Response response = given()
                     .header("Content-Type","application/json")
-                    .header("Authorization",TestAuthController.jwt)
+                    .header("accept","application/json")
+                    .header(TestAuthController.AUTH_HEADER,TestAuthController.jwt)
                     .body(requestBody)
                     .get("/menu");
 
@@ -186,10 +194,10 @@ public class TestMenuController extends AbstractTestNGSpringContextTests {
 //        requestBody.put("start",null);
 //        requestBody.put("end",null);
         try{
-            initObject(menu);
             Response response = given()
                     .header("Content-Type","application/json")
-                    .header("Authorization",TestAuthController.jwt)
+                    .header("accept","application/json")
+                    .header(TestAuthController.AUTH_HEADER,TestAuthController.jwt)
                     .queryParam("size",pageSize)
                     .body(requestBody)
                     .post("/menu/v1/"+sort+"/"+sortBy+"/"+page);
@@ -220,6 +228,119 @@ public class TestMenuController extends AbstractTestNGSpringContextTests {
         }
     }
 
+    @Test(priority = 50)
+    void uploadExcel(){
+        Response response ;
+        try{
+            Long longCount = menuRepo.count();
+            List<ValMenuDTO> list=new ArrayList<>();
+            for (int i = 0; i < 2; i++) {
+                longCount++;
+                String nama = TestAuthController.generateData.genDataAlfaNumeric(3,20);
+                String path = "/"+nama.replaceAll(" ","").trim().toLowerCase();
+                String deskripsi = TestAuthController.generateData.genDataAlfaNumeric(20,255);
+                String kodeMenu = getKodeMenu(String.valueOf(longCount));
+                ValMenuDTO menu = new ValMenuDTO();
+                menu.setNama(nama);
+                menu.setPath(path);
+                menu.setDeskripsi(deskripsi);
+                menu.setKodeMenu(kodeMenu);
+                list.add(menu);
+            }
+            String [] kolomMenu = {"NAMA","PATH","DESKRIPSI","KODE_MENU"};
+            GenerateExcelMenu.generateDataExcel(list,kolomMenu);
+            response = given().
+                    header("Content-Type","multipart/form-data").
+                    header("accept","application/json").
+                    header(TestAuthController.AUTH_HEADER,TestAuthController.jwt).
+                    multiPart("file",new File(System.getProperty("user.dir")+"/src/test/resources/data-test/menu.xlsx"),
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet").
+                    request(Method.POST,"/menu/v1/upload");
+
+            int intResponse = response.getStatusCode();
+            JsonPath jsonPath = response.jsonPath();
+            Assert.assertEquals(intResponse,201,"Error response code");
+            Assert.assertEquals(jsonPath.getString("message"),ConstantMessage.SUCCESS_UPLOAD,"Error Response message ");
+            Assert.assertNotNull(jsonPath.getString("data"),"Errorr Content");
+            Assert.assertTrue(Boolean.parseBoolean(jsonPath.getString("success")),"Error Response success ");
+            Assert.assertNotNull(jsonPath.getString("timestamp"),"Error Response timestamp ");
+        }catch (Exception e){
+            Assert.assertNotNull(null,"Exception "+e.getCause()+" Message "+e.getMessage());
+        }
+    }
+
+    @Test(priority = 60)
+    void downloadExcel(){
+        initObject(menu);
+        requestBody.clear();
+        requestBody.put("nama",menu.getNama());
+
+        try{
+            Response response = given().
+                    header("Content-Type","application/json").
+                    header("accept","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet").
+                    header(TestAuthController.AUTH_HEADER,TestAuthController.jwt).
+                    body(requestBody).
+                    request(Method.POST,"/menu/v1/excel");
+
+            int intResponse = response.getStatusCode();
+            Assert.assertEquals(intResponse,200);
+            /** khusus untuk download file harus di cek header nya */
+            Assert.assertTrue(response.getHeader("Content-Disposition").contains(".xlsx"));// file nya memiliki extension .xlsx
+            Assert.assertEquals(response.getHeader("Content-Type"),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");// content type wajib ini untuk excel
+        }catch (Exception e){
+            Assert.assertNotNull(null,"Exception "+e.getCause()+" Message "+e.getMessage());
+        }
+    }
+
+    @Test(priority = 70)
+    void downloadPdf(){
+        initObject(menu);
+        requestBody.clear();
+        requestBody.put("nama",menu.getNama());
+        try{
+            Response response = given().
+                    header("Content-Type","application/json").
+                    header("accept","application/pdf").//mime type
+                    header(TestAuthController.AUTH_HEADER,TestAuthController.jwt).
+                    body(requestBody).
+                    request(Method.POST,"/menu/v1/pdf");
+
+            int intResponse = response.getStatusCode();
+            Assert.assertEquals(intResponse,200);
+            /** khusus untuk download file harus di cek header nya */
+            Assert.assertTrue(response.getHeader("Content-Disposition").contains(".pdf"));// file nya memiliki extension .pdf
+            Assert.assertEquals(response.getHeader("Content-Type"),"application/pdf");// content type wajib ini untuk pdf
+        }catch (Exception e){
+            Assert.assertNotNull(null,"Exception "+e.getCause()+" Message "+e.getMessage());
+        }
+    }
+
+    @Test(priority = 99)
+    public void delete(){
+        try{
+            initObject(menu);
+            requestBody.clear();
+            Response response = given()
+                    .header("Content-Type","application/json")
+                    .header("accept","application/json")
+                    .header(TestAuthController.AUTH_HEADER,TestAuthController.jwt)
+                    .body(requestBody)
+                    .delete("/menu/v1/"+menu.getId());
+
+            int responseCode = response.getStatusCode();
+            JsonPath jsonPath = response.getBody().jsonPath();
+            jsonPath.prettyPrint();
+            Assert.assertEquals(responseCode,200,"Error Response code ");
+            Assert.assertEquals(jsonPath.getInt("status"),200,"Error Response status ");
+            Assert.assertEquals(jsonPath.getString("message"), ConstantMessage.SUCCESS_DELETE,"Error Response message ");
+            Assert.assertEquals(jsonPath.getString("data"),"","Error Response data ");
+            Assert.assertTrue(jsonPath.getBoolean("success"),"Error Response success ");
+            Assert.assertNotNull(jsonPath.getString("timestamp"),"Error Response timestamp ");
+        }catch (Exception e){
+            Assert.assertNotNull(null,"Exception "+e.getCause()+" Message "+e.getMessage());
+        }
+    }
     private String getKodeMenu(String count){
 //        menu = menuRepo.findTop1ByOrderByIdDesc().orElse(null);
         String kode = "";

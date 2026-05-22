@@ -26,6 +26,7 @@ public class TestAuthController extends AbstractTestNGSpringContextTests {
     private String password;
     private String otp;
     private JSONObject requestBody;
+    public static final String AUTH_HEADER = "Authorization";
     public static final String ADMIN_USERNAME = "admin.123";
     public static final String ADMIN_PASSWORD = "Admin@123";
     public static final String TEST_HOST = "http://localhost:8081/api";
